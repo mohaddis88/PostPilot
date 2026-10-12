@@ -92,6 +92,19 @@ export const ContentStep: React.FC<ContentStepProps> = ({
     }
   };
 
+    // "All" selects every platform that supports the current content type
+  const supportedPlatforms = allPlatforms.filter(
+    (p) => postType !== 'story' || PLATFORM_SPECS[p].story.supported
+  );
+  const allSelected = supportedPlatforms.every((p) => selectedPlatforms.includes(p));
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedPlatforms(supportedPlatforms.slice(0, 1)); // keep at least one
+    } else {
+      setSelectedPlatforms(supportedPlatforms);
+    }
+  };
+
   // Process chosen File
   const handleFileChange = (file: File) => {
     setUploadError(null);
@@ -193,7 +206,7 @@ export const ContentStep: React.FC<ContentStepProps> = ({
                 onClick={() => handlePostTypeChange('post')}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                   postType === 'post'
-                    ? 'bg-[var(--accent)] text-[var(--accent-text)] shadow-xs'
+                    ? 'bg-[var(--accent)] text-[var(--on-accent)] shadow-xs'
                     : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -204,7 +217,7 @@ export const ContentStep: React.FC<ContentStepProps> = ({
                 onClick={() => handlePostTypeChange('story')}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                   postType === 'story'
-                    ? 'bg-[var(--accent)] text-[var(--accent-text)] shadow-xs'
+                    ? 'bg-[var(--accent)] text-[var(--on-accent)] shadow-xs'
                     : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -218,6 +231,18 @@ export const ContentStep: React.FC<ContentStepProps> = ({
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">Target Platforms</span>
           <div className="flex items-center gap-2 mt-1.5">
+                        <button
+              type="button"
+              onClick={handleSelectAll}
+              aria-pressed={allSelected}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+                allSelected
+                  ? 'border-[var(--border-strong)] bg-[var(--surface-hover)] text-[var(--text)] font-semibold shadow-xs'
+                  : 'border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--text)]'
+              }`}
+            >
+              All
+            </button>
             {allPlatforms.map((plat) => {
               const spec = PLATFORM_SPECS[plat];
               const isStory = postType === 'story';

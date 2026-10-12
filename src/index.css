@@ -5,6 +5,7 @@
   --transition-speed: 300ms;
   --accent: #7CC4F5;
   --accent-fill: #7CC4F5;
+  --on-accent: #0A0A0A;
 }
 
 html, body, #root {

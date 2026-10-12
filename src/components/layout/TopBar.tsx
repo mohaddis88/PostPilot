@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Sun,
   Moon,
@@ -35,11 +36,42 @@ export const TopBar: React.FC = () => {
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const userButtonRef = useRef<HTMLButtonElement>(null);
+  const userMenuDropdownRef = useRef<HTMLDivElement>(null);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number }>({ top: 68, right: 16 });
+
+  const updateMenuPosition = () => {
+    if (userButtonRef.current) {
+      const rect = userButtonRef.current.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + 8,
+        right: Math.max(16, window.innerWidth - rect.right),
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (userMenuOpen) {
+      updateMenuPosition();
+      window.addEventListener('resize', updateMenuPosition);
+      window.addEventListener('scroll', updateMenuPosition, true);
+      return () => {
+        window.removeEventListener('resize', updateMenuPosition);
+        window.removeEventListener('scroll', updateMenuPosition, true);
+      };
+    }
+  }, [userMenuOpen]);
 
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(target) &&
+        userMenuDropdownRef.current &&
+        !userMenuDropdownRef.current.contains(target)
+      ) {
         setUserMenuOpen(false);
       }
     };
@@ -68,7 +100,7 @@ export const TopBar: React.FC = () => {
       className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--bg)] transition-colors duration-300"
       style={{ backgroundColor: 'var(--bg)' }}
     >
-      <div className="flex items-center justify-between h-16 pr-4 sm:pr-6 lg:pr-8 w-full gap-3 overflow-hidden">
+      <div className="flex items-center justify-between h-16 pr-4 sm:pr-6 lg:pr-8 w-full gap-3">
         {/* Left: 64px Menu button slot perfectly aligned with 64px rail, followed by PostPilot brand */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <div className="w-16 h-16 flex items-center justify-center shrink-0">
@@ -172,6 +204,7 @@ export const TopBar: React.FC = () => {
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
             <button
+              ref={userButtonRef}
               onClick={() => setUserMenuOpen(!userMenuOpen)}
               aria-expanded={userMenuOpen}
               aria-haspopup="true"
@@ -197,9 +230,20 @@ export const TopBar: React.FC = () => {
               <ChevronDown className="w-3.5 h-3.5 text-[var(--muted)]" />
             </button>
 
-            {/* Dropdown Popover (solid opaque overlay, no glass transparency) */}
-            {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-64 p-3 solid-overlay rounded-2xl z-50 animate-in fade-in duration-150">
+            {/* Dropdown Popover via portal to document.body, fixed under button, opaque background, high z-index */}
+            {userMenuOpen && typeof document !== 'undefined' && createPortal(
+              <div
+                ref={userMenuDropdownRef}
+                role="menu"
+                aria-label="User account menu"
+                className="fixed w-64 p-3 rounded-2xl z-[99999] shadow-2xl solid-overlay bg-[var(--surface)] border border-[var(--border)] animate-in fade-in duration-150"
+                style={{
+                  top: `${menuPosition.top}px`,
+                  right: `${menuPosition.right}px`,
+                  backgroundColor: 'var(--surface)',
+                  opacity: 1,
+                }}
+              >
                 <div className="pb-2.5 border-b border-[var(--border)] space-y-0.5">
                   <p className="text-sm font-semibold text-[var(--text)]">{user.name}</p>
                   <p className="text-xs text-[var(--muted)] truncate">{user.email}</p>
@@ -210,11 +254,12 @@ export const TopBar: React.FC = () => {
                     Profile
                   </span>
                   <button
+                    type="button"
                     onClick={() => {
                       handleProfileSwitch('company');
                       setUserMenuOpen(false);
                     }}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-[var(--text)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-[var(--text)] hover:bg-[var(--surface-hover,rgba(255,255,255,0.06))] transition-colors cursor-pointer"
                   >
                     <span>Company</span>
                     {activeProfile === 'company' && (
@@ -222,11 +267,12 @@ export const TopBar: React.FC = () => {
                     )}
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       handleProfileSwitch('model');
                       setUserMenuOpen(false);
                     }}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-[var(--text)] hover:bg-[var(--surface)] transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-[var(--text)] hover:bg-[var(--surface-hover,rgba(255,255,255,0.06))] transition-colors cursor-pointer"
                   >
                     <span>Model</span>
                     {activeProfile === 'model' && (
@@ -237,17 +283,19 @@ export const TopBar: React.FC = () => {
 
                 <div className="pt-2 border-t border-[var(--border)]">
                   <button
+                    type="button"
                     onClick={() => {
                       setUserMenuOpen(false);
                       logout();
                     }}
-                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs text-[var(--status-danger)] hover:bg-[rgba(214,69,69,0.08)] transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs text-[var(--status-danger)] hover:bg-[rgba(214,69,69,0.08)] transition-colors cursor-pointer font-medium"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    <span>Log out</span>
+                    <span>Sign out</span>
                   </button>
                 </div>
-              </div>
+              </div>,
+              document.body
             )}
           </div>
         </div>
