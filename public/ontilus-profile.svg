@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" fill="none">
+  <!-- Pure black background -->
+  <rect width="400" height="400" fill="#000000" />
+
+  <defs>
+    <!-- Left arc gradient: Sapphire blue to cyan -->
+    <linearGradient id="leftRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="35%" stop-color="#2563EB" />
+      <stop offset="70%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#00D2FE" />
+    </linearGradient>
+
+    <!-- Right arc gradient: Electric cyan to bright turquoise -->
+    <linearGradient id="rightRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="40%" stop-color="#00BAF2" />
+      <stop offset="75%" stop-color="#00E5FF" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <!-- Soft glow behind ring -->
+    <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00D2FE" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#0284C7" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Filter for slight glow bloom -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Ambient Glow -->
+  <circle cx="200" cy="162" r="68" fill="url(#ringGlow)" />
+
+  <!-- Split Ring Symbol -->
+  <g filter="url(#subtleGlow)">
+    <!-- Left Semicircle Arc -->
+    <!-- Center (200, 162), Outer R=43, Inner R=23, Thickness=20, Gap width=6 (dx=3) -->
+    <path
+      d="M 197 119
+         A 43 43 0 0 0 197 205
+         L 197 185
+         A 23 23 0 0 1 197 139
+         Z"
+      fill="url(#leftRingGrad)"
+    />
+
+    <!-- Right Semicircle Arc -->
+    <path
+      d="M 203 119
+         A 43 43 0 0 1 203 205
+         L 203 185
+         A 23 23 0 0 0 203 139
+         Z"
+      fill="url(#rightRingGrad)"
+    />
+  </g>
+
+  <!-- ONTILUS Brand Typography -->
+  <text
+    x="200"
+    y="248"
+    fill="#FFFFFF"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-size="29"
+    font-weight="700"
+    letter-spacing="7"
+    text-anchor="middle"
+  >ONTILUS</text>
+
+  <!-- Tagline Typography -->
+  <text
+    x="200"
+    y="273"
+    fill="#CBD5E1"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-size="9"
+    font-weight="500"
+    letter-spacing="3.8"
+    text-anchor="middle"
+  >INTELLIGENCE WITHOUT LIMITS</text>
+</svg>

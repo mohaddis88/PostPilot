@@ -1,0 +1,272 @@
+@import "tailwindcss";
+
+:root {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --transition-speed: 300ms;
+  --accent: #7CC4F5;
+  --accent-fill: #7CC4F5;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Custom scrollbars for all scrollable areas */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text) 25%, transparent) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+  background-clip: padding-box;
+}
+
+.stable-scroll {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* Solid opaque overlays for dropdowns, popovers, menus and modals (never transparent) */
+.solid-overlay {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.5);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 50;
+}
+
+/* Light theme defaults */
+:root,
+html:not(.dark) {
+  --bg: #FFFFFF;
+  --surface: #F4F5F7;
+  --border: #D9DCE1;
+  --text: #0A0A0A;
+  --muted: #6B7280;
+  --glass-bg: rgba(255, 255, 255, 0.60);
+  --glass-fallback: #FFFFFF;
+  --glass-shadow: 0 8px 32px -4px rgba(10, 10, 10, 0.06), 0 2px 8px -2px rgba(10, 10, 10, 0.04);
+}
+
+/* Dark theme */
+html.dark {
+  --bg: #0B0C0E;
+  --surface: #15171A;
+  --border: #2A2D33;
+  --text: #F5F6F7;
+  --muted: #9AA0A9;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-fallback: #15171A;
+  --glass-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.35), 0 2px 8px -2px rgba(0, 0, 0, 0.25);
+}
+
+/* Status colors (only for status indicators) */
+:root {
+  --status-success: #2E9E6B;
+  --status-warning: #D99A1E;
+  --status-danger: #D64545;
+  --danger: #D64545;
+  --info: #3B82F6;
+}
+
+/* Platform identifier colors (small identifiers only: icon chips, chart series, calendar dots; never buttons or large areas) */
+:root {
+  --p-linkedin: #0A66C2;
+  --p-facebook: #1877F2;
+  --p-instagram: #E1306C;
+  --p-tiktok: #FE2C55;
+  --p-linkedin-tint: rgba(10, 102, 194, 0.12);
+  --p-facebook-tint: rgba(24, 119, 242, 0.12);
+  --p-instagram-tint: rgba(225, 48, 108, 0.12);
+  --p-tiktok-tint: rgba(254, 44, 85, 0.12);
+}
+
+html.dark {
+  --p-linkedin: #388BEF;
+  --p-facebook: #4599FF;
+  --p-instagram: #FA3E7E;
+  --p-tiktok: #FF4D6D;
+  --p-linkedin-tint: rgba(56, 139, 239, 0.18);
+  --p-facebook-tint: rgba(69, 153, 255, 0.18);
+  --p-instagram-tint: rgba(250, 62, 126, 0.18);
+  --p-tiktok-tint: rgba(255, 77, 109, 0.18);
+}
+
+/* Profile accent: company (Ontilus) */
+[data-profile="company"] {
+  --accent: #7CC4F5;
+  --accent-fill: #7CC4F5;
+  --accent-fill-rgb: 124, 196, 245;
+  --accent-text: #1F78B4;
+  --accent-border-tint: rgba(124, 196, 245, 0.38);
+  --accent-glow: rgba(124, 196, 245, 0.16);
+  --accent-button-hover-glow: 0 4px 20px -2px rgba(124, 196, 245, 0.45);
+}
+
+html.dark [data-profile="company"],
+html.dark[data-profile="company"] {
+  --accent: #7CC4F5;
+  --accent-text: #8FD0FA;
+  --accent-border-tint: rgba(124, 196, 245, 0.28);
+  --accent-glow: rgba(124, 196, 245, 0.14);
+  --accent-button-hover-glow: 0 4px 20px -2px rgba(124, 196, 245, 0.40);
+}
+
+/* Profile accent: model (Aria Tan) */
+[data-profile="model"] {
+  --accent: #D4B5A0;
+  --accent-fill: #D4B5A0;
+  --accent-fill-rgb: 212, 181, 160;
+  --accent-text: #8F624A;
+  --accent-border-tint: rgba(212, 181, 160, 0.38);
+  --accent-glow: rgba(212, 181, 160, 0.16);
+  --accent-button-hover-glow: 0 4px 20px -2px rgba(212, 181, 160, 0.45);
+}
+
+html.dark [data-profile="model"],
+html.dark[data-profile="model"] {
+  --accent: #D4B5A0;
+  --accent-text: #E0C4B0;
+  --accent-border-tint: rgba(212, 181, 160, 0.28);
+  --accent-glow: rgba(212, 181, 160, 0.14);
+  --accent-button-hover-glow: 0 4px 20px -2px rgba(212, 181, 160, 0.40);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  margin: 0;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+  overflow-x: hidden;
+}
+
+/* Glass card styling */
+.glass-card {
+  background-color: var(--glass-fallback);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--accent-border-tint);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow);
+  transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+/* Pill buttons with hover lift & soft accent glow */
+.btn-accent {
+  background-color: var(--accent-fill);
+  color: #0A0A0A;
+  border-radius: 9999px;
+  font-weight: 600;
+  padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 160ms cubic-bezier(0.2, 0, 0, 1), box-shadow 160ms cubic-bezier(0.2, 0, 0, 1), opacity 160ms ease, background-color var(--transition-speed) ease;
+  outline: none;
+}
+
+.btn-accent:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  box-shadow: var(--accent-button-hover-glow);
+}
+
+.btn-accent:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+.btn-accent:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary outline button */
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 9999px;
+  font-weight: 500;
+  padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 160ms ease, background-color 160ms ease, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+  outline: none;
+}
+
+.btn-outline:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background-color: var(--surface);
+  border-color: var(--accent-border-tint);
+}
+
+.btn-outline:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+.btn-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Base input styling (radius 12px) */
+.input-base {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color var(--transition-speed) ease;
+}
+
+.input-base:focus-visible {
+  border-color: var(--accent-text);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.input-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Cursor glow background layer */
+.cursor-glow-layer {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity 300ms ease;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-glow-layer {
+    display: none;
+  }
+}

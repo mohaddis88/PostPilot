@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Landscape 16:9 to Square 1:1, center zoom 1",
+    "sourceW": 1920,
+    "sourceH": 1080,
+    "targetRatio": 1.0,
+    "crop": { "cx": 0.5, "cy": 0.5, "zoom": 1.0 },
+    "expected": { "x": 420, "y": 0, "w": 1080, "h": 1080 }
+  },
+  {
+    "description": "Landscape 16:9 to Vertical 9:16, center zoom 1",
+    "sourceW": 1920,
+    "sourceH": 1080,
+    "targetRatio": 0.5625,
+    "crop": { "cx": 0.5, "cy": 0.5, "zoom": 1.0 },
+    "expected": { "x": 656, "y": 0, "w": 608, "h": 1080 }
+  },
+  {
+    "description": "Vertical 9:16 to Landscape 16:9, center zoom 1",
+    "sourceW": 1080,
+    "sourceH": 1920,
+    "targetRatio": 1.7777777778,
+    "crop": { "cx": 0.5, "cy": 0.5, "zoom": 1.0 },
+    "expected": { "x": 0, "y": 656, "w": 1080, "h": 607 }
+  },
+  {
+    "description": "Square 1:1 with zoom 2 at bottom-right corner",
+    "sourceW": 1000,
+    "sourceH": 1000,
+    "targetRatio": 1.0,
+    "crop": { "cx": 0.9, "cy": 0.9, "zoom": 2.0 },
+    "expected": { "x": 500, "y": 500, "w": 500, "h": 500 }
+  },
+  {
+    "description": "Landscape exact match ratio zoom 1",
+    "sourceW": 1920,
+    "sourceH": 1080,
+    "targetRatio": 1.7777777778,
+    "crop": { "cx": 0.5, "cy": 0.5, "zoom": 1.0 },
+    "expected": { "x": 0, "y": 0, "w": 1920, "h": 1080 }
+  }
+]

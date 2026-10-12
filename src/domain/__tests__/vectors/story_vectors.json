@@ -1,0 +1,74 @@
+[
+  {
+    "description": "90s / 30s -> 0-30, 30-60, 60-90",
+    "durationMs": 90000,
+    "maxPartMs": 60000,
+    "preferredMs": 30000,
+    "minTailMs": 5000,
+    "expected": [
+      { "index": 0, "startMs": 0, "endMs": 30000 },
+      { "index": 1, "startMs": 30000, "endMs": 60000 },
+      { "index": 2, "startMs": 60000, "endMs": 90000 }
+    ]
+  },
+  {
+    "description": "75s -> 30, 30, 15",
+    "durationMs": 75000,
+    "maxPartMs": 60000,
+    "preferredMs": 30000,
+    "minTailMs": 5000,
+    "expected": [
+      { "index": 0, "startMs": 0, "endMs": 30000 },
+      { "index": 1, "startMs": 30000, "endMs": 60000 },
+      { "index": 2, "startMs": 60000, "endMs": 75000 }
+    ]
+  },
+  {
+    "description": "100s -> 30, 30, 30, 10",
+    "durationMs": 100000,
+    "maxPartMs": 60000,
+    "preferredMs": 30000,
+    "minTailMs": 5000,
+    "expected": [
+      { "index": 0, "startMs": 0, "endMs": 30000 },
+      { "index": 1, "startMs": 30000, "endMs": 60000 },
+      { "index": 2, "startMs": 60000, "endMs": 90000 },
+      { "index": 3, "startMs": 90000, "endMs": 100000 }
+    ]
+  },
+  {
+    "description": "92s -> four 23s parts",
+    "durationMs": 92000,
+    "maxPartMs": 60000,
+    "preferredMs": 30000,
+    "minTailMs": 5000,
+    "expected": [
+      { "index": 0, "startMs": 0, "endMs": 23000 },
+      { "index": 1, "startMs": 23000, "endMs": 46000 },
+      { "index": 2, "startMs": 46000, "endMs": 69000 },
+      { "index": 3, "startMs": 69000, "endMs": 92000 }
+    ]
+  },
+  {
+    "description": "61s -> three parts of 20.334s, 20.333s, 20.333s",
+    "durationMs": 61000,
+    "maxPartMs": 60000,
+    "preferredMs": 30000,
+    "minTailMs": 5000,
+    "expected": [
+      { "index": 0, "startMs": 0, "endMs": 20334 },
+      { "index": 1, "startMs": 20334, "endMs": 40667 },
+      { "index": 2, "startMs": 40667, "endMs": 61000 }
+    ]
+  },
+  {
+    "description": "20s (max 60) -> one part",
+    "durationMs": 20000,
+    "maxPartMs": 60000,
+    "preferredMs": 30000,
+    "minTailMs": 5000,
+    "expected": [
+      { "index": 0, "startMs": 0, "endMs": 20000 }
+    ]
+  }
+]

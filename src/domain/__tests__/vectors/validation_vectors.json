@@ -1,0 +1,80 @@
+[
+  {
+    "description": "Valid Instagram Reel video",
+    "asset": {
+      "id": "asset-1",
+      "kind": "video",
+      "width": 1080,
+      "height": 1920,
+      "durationMs": 25000,
+      "sizeBytes": 15000000,
+      "mime": "video/mp4"
+    },
+    "platform": "instagram",
+    "postType": "post",
+    "expectedPass": true,
+    "failedCheckIds": []
+  },
+  {
+    "description": "Instagram video too short (2s < 3s minimum)",
+    "asset": {
+      "id": "asset-2",
+      "kind": "video",
+      "width": 1080,
+      "height": 1920,
+      "durationMs": 2000,
+      "sizeBytes": 5000000,
+      "mime": "video/mp4"
+    },
+    "platform": "instagram",
+    "postType": "post",
+    "expectedPass": false,
+    "failedCheckIds": ["video_duration"]
+  },
+  {
+    "description": "LinkedIn story is unsupported format",
+    "asset": {
+      "id": "asset-3",
+      "kind": "video",
+      "width": 1080,
+      "height": 1920,
+      "durationMs": 15000,
+      "sizeBytes": 8000000,
+      "mime": "video/mp4"
+    },
+    "platform": "linkedin",
+    "postType": "story",
+    "expectedPass": false,
+    "failedCheckIds": ["story_support"]
+  },
+  {
+    "description": "TikTok post image with PNG mime (must be JPG)",
+    "asset": {
+      "id": "asset-4",
+      "kind": "image",
+      "width": 1080,
+      "height": 1920,
+      "sizeBytes": 2000000,
+      "mime": "image/png"
+    },
+    "platform": "tiktok",
+    "postType": "post",
+    "expectedPass": false,
+    "failedCheckIds": ["media_mime"]
+  },
+  {
+    "description": "Oversized Instagram image (35MB exceeds 30MB limit)",
+    "asset": {
+      "id": "asset-5",
+      "kind": "image",
+      "width": 1080,
+      "height": 1080,
+      "sizeBytes": 36700160,
+      "mime": "image/jpeg"
+    },
+    "platform": "instagram",
+    "postType": "post",
+    "expectedPass": false,
+    "failedCheckIds": ["file_size"]
+  }
+]

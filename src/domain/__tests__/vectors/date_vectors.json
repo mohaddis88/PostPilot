@@ -1,0 +1,37 @@
+[
+  {
+    "description": "Leap year test cases",
+    "leapYears": [
+      { "year": 2024, "expected": true },
+      { "year": 2026, "expected": false },
+      { "year": 2000, "expected": true },
+      { "year": 1900, "expected": false }
+    ]
+  },
+  {
+    "description": "Days in month test cases",
+    "daysInMonth": [
+      { "year": 2024, "month": 2, "expected": 29 },
+      { "year": 2026, "month": 2, "expected": 28 },
+      { "year": 2026, "month": 4, "expected": 30 },
+      { "year": 2026, "month": 10, "expected": 31 }
+    ]
+  },
+  {
+    "description": "Combine local date/time in Asia/Kuala_Lumpur (+08:00) to UTC",
+    "timezoneConversions": [
+      {
+        "dateStr": "2026-10-10",
+        "timeStr": "15:00",
+        "timeZone": "Asia/Kuala_Lumpur",
+        "expectedUtc": "2026-10-10T07:00:00.000Z"
+      },
+      {
+        "dateStr": "2026-10-10",
+        "timeStr": "08:00",
+        "timeZone": "Asia/Kuala_Lumpur",
+        "expectedUtc": "2026-10-10T00:00:00.000Z"
+      }
+    ]
+  }
+]

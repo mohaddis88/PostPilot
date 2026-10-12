@@ -1,0 +1,6 @@
+{
+  "name": "PostPilot",
+  "description": "PostPilot - Your social media manager.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
