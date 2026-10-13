@@ -59,7 +59,7 @@ Generating or editing video. Comment and DM management. Paid ads. Real Instagram
 - FR24. Recommendations (best time, format, CTA) only when each compared group has at least 5 posts and a difference of at least 15%. "Try this" opens Create with exactly the suggested values.
 
 ### Clawed
-- FR25. One shared chat for all profiles. Uses allowlisted backend tools only. Anything that publishes, reschedules or cancels needs a confirmation card naming profile, platform and time.
+- FR25. Clawed is the OpenClaw agent (WhatsApp and other chat apps). It reaches PostPilot only through a scoped Clawed API and one custom skill, using allowlisted operations. Anything that publishes, reschedules or cancels needs a confirmation naming profile, platform and time. The in-app Clawed page is one shared chat for all profiles (mock until the connection is live).
 - FR26. Everything Clawed can do is also possible through the normal UI.
 
 ## 7. Non-functional requirements
@@ -68,7 +68,7 @@ Generating or editing video. Comment and DM management. Paid ads. Real Instagram
 - Performance: pages usable on a normal laptop connection; heavy rendering done in background jobs.
 - Accessibility: keyboard use, visible focus, AA contrast, reduced motion respected.
 - Maintainability: logic in pure tested functions; mock and real data behind one API layer.
-- Cost: free or low-cost tiers for the demo (Supabase, Vercel, Gemini free tier with test data only).
+- Cost: free or low-cost tiers for the demo (Supabase, Vercel, an LLM key only for Clawed's own model, test data only).
 
 ## 8. Scope for the internship demo
 In: full UI on mock data, domain logic with tests, Supabase login and profiles, GitHub and Vercel deployment, documentation. Possibly in: real LinkedIn publish if the app is approved in time.

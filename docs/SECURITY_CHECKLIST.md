@@ -4,7 +4,7 @@ Tick before each milestone. If an item can't be ticked, write why next to it.
 
 ## A. Before the first push to GitHub
 - [ ] `.gitignore` covers `.env*`, `node_modules`, build output
-- [ ] No keys in the code (search for `KEY`, `SECRET`, `TOKEN`, `process.env`, `GEMINI`)
+- [ ] No keys in the code (search for `KEY`, `SECRET`, `TOKEN`, `process.env`)
 - [ ] The AI Studio export doesn't bake an API key into the bundle
 - [ ] `.env.example` has placeholder values only
 - [ ] Repository is private
@@ -43,13 +43,18 @@ Tick before each milestone. If an item can't be ticked, write why next to it.
 - [ ] Confirmation modal names profile, platform and time
 - [ ] A test post on a throwaway account first
 
-## F. Clawed
-- [ ] Tool list is allowlisted, nothing else callable
-- [ ] No credentials or database access in its context
+## F. Clawed (OpenClaw)
+- [ ] Clawed API has an allowlist of operations, nothing else callable
+- [ ] Dedicated token, scoped to profiles and operations, stored hashed, revocable
+- [ ] No Supabase service key, OAuth tokens or Google credentials on the OpenClaw host
+- [ ] OpenClaw runs on its own machine or container
+- [ ] Shell, file and browser tools disabled unless needed
+- [ ] Only reviewed skills installed (the PostPilot skill is written by us)
+- [ ] WhatsApp senders allowlisted
+- [ ] High-impact actions need a second-step confirmation
+- [ ] Audit log shows source = clawed
 - [ ] Prompt-injection test captions behave correctly
-- [ ] High-impact actions require confirmation
-- [ ] Mock mode works when no LLM key is set
-- [ ] Only fictional data while using a free-tier key
+- [ ] Only fictional data while using a free-tier LLM key
 
 ## G. Before the demo or handover
 - [ ] Both profiles tested in light and dark, no data leaking across

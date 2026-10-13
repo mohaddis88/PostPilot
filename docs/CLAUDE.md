@@ -5,7 +5,7 @@ Internal tool: schedule and publish **finished images/videos + caption** (as Pos
 Read first: `docs/PRD.md`, `docs/architecture.md`, `docs/design.md`, `docs/SECURITY.md`, `docs/plan.md`, `docs/AI_rules.md`. PRs follow `docs/PR_.md`.
 
 ## Stack
-React + TypeScript + Vite (frontend, Vercel) · FastAPI (backend) · Celery + Redis (workers) · Supabase Postgres/Auth/RLS/Realtime (state) · Google Drive (media) · LinkedIn real adapter · Instagram/TikTok mock adapters · Clawed (Gemini via FastAPI tools).
+React + TypeScript + Vite (frontend, Vercel) · FastAPI (backend) · Celery + Redis (workers) · Supabase Postgres/Auth/RLS/Realtime (state) · Google Drive (media) · LinkedIn real adapter · Instagram/TikTok mock adapters · Clawed (OpenClaw agent on WhatsApp, via a scoped Clawed API plus a custom skill).
 
 ## Layout
 `src/domain` (pure logic) `src/api` (mock + http) `src/ui` · `/backend` `/workers` `/publishers` `/supabase` `/tests` `/docs`
@@ -27,7 +27,7 @@ lint:      ruff check . && npm run lint
 3. Postgres is the source of truth. Redis is only queue/lock coordination.
 4. Idempotency key + durable job state before any external publish. Unknown outcome => reconcile, never blind retry.
 5. Secrets only in env. Service-role key, OAuth tokens, Google credentials never reach the browser or Clawed.
-6. Clawed uses allowlisted FastAPI tools only. High-impact actions need confirmation.
+6. Clawed (OpenClaw) acts only through the scoped Clawed API with its own token. High-impact actions are two-step (propose, confirm).
 7. LinkedIn: current Posts API, versioned headers from config. Not `ugcPosts`.
 8. Mock adapters are labelled "Simulated" everywhere.
 9. UI uses `design.md` tokens only; `data-profile="company|model"` and `data-theme="light|dark"` on `<html>`.

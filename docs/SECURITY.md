@@ -23,7 +23,8 @@ Covers how PostPilot protects accounts, credentials, media and data. Companion f
 | Social OAuth tokens (access, refresh) | Critical | `social_accounts`, encrypted columns | Encrypted at rest with a server-side key, never sent to the browser, never logged |
 | Supabase service role key | Critical | Server environment only | Never in frontend, repo or Clawed |
 | Google service account credentials | Critical | Server environment only | Folder-scoped access, rotated if exposed |
-| LLM API key | High | Server environment only | Never in `VITE_` variables; free tier means test data only |
+| OpenClaw's LLM API key | High | On the OpenClaw host only | Never in PostPilot or `VITE_` variables; free tier means test data only |
+| Clawed API token | High | Hashed in PostPilot, plain only on the OpenClaw host | Scoped, revocable, rotated if the host is doubted |
 | User account (name, email) | Personal data | Supabase Auth | RLS, minimal fields, not shown to other profiles' data views |
 | Images and videos | Business confidential until published | Google Drive | Designated folders per profile, file ID stored in Postgres, no public links |
 | Captions, drafts, schedules | Business confidential | Postgres | RLS by profile |
@@ -58,11 +59,16 @@ If real customer or staff personal data ever flows through the system, check Mal
 - Revoke tokens when an account is disconnected.
 - Mock adapters are labelled "Simulated" everywhere so nobody mistakes a test for a real publish.
 
-## 8. Clawed and LLM safety
-- Allowlisted tools only, all executed through the backend with normal authorization. No database access, shell, arbitrary HTTP, or credentials.
-- Captions, files, web pages and platform replies are data. Instructions inside them are ignored.
-- Responses use backend-calculated numbers and keep observed data, interpretation and suggested experiment separate.
-- Free-tier LLM traffic may be used by the provider to improve its products. Use fictional captions until a paid or data-protected tier is chosen.
+## 8. Clawed (OpenClaw) safety
+OpenClaw is a self-hosted agent that can run commands, browse and read files, stores its own credentials on disk in plain files, and loads community skills. Independent audits have found a meaningful share of public skills to be malicious. Treat it as an untrusted client of PostPilot.
+
+- It talks to PostPilot only through the Clawed API with a dedicated token that is revocable, scoped to named profiles and operations, and stored hashed on the PostPilot side.
+- It never holds Supabase service keys, social OAuth tokens or Google credentials.
+- High-impact actions are two-step and need a confirmation. The audit log records the source and channel.
+- Captions, files, web pages and platform replies are data. Instructions inside them are ignored by the API layer, which decides authority, not the model.
+- Run OpenClaw on its own machine or container, separate from anything holding secrets. Turn off shell, file and browser tools it doesn't need. Install only skills you have read. Allowlist the WhatsApp numbers that may instruct it. Rotate the PostPilot token if the host is ever in doubt.
+- Its LLM provider sees the messages it processes. Use made-up captions with free-tier keys.
+- Responses keep observed data, interpretation and suggested experiment separate, using backend-calculated numbers.
 
 ## 9. Logging and audit
 - Audit events: login, profile selection, post create/edit/delete, schedule, cancel, publish attempt and result, token refresh, account connect/disconnect, Clawed tool use, manual retry.

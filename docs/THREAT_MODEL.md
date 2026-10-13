@@ -33,13 +33,15 @@ Browser to FastAPI. FastAPI to Supabase. FastAPI and workers to Google Drive. Wo
 | T12 | Brute-force or credential stuffing on login | Account takeover | Supabase Auth protections, rate limiting, strong passwords, optional MFA | To configure |
 | T13 | Drive over-exposure (AI or app can read the whole company Drive) | Data leak | Service account limited to designated folders, folder-to-profile check | Designed |
 | T14 | Dependency or supply-chain compromise | Code execution | Lockfiles, audits, pinned versions, review AI-suggested packages | Ongoing |
-| T15 | Free-tier LLM retains captions | Confidential content shared with provider | Test data only, mock mode, move to a data-protected tier before real use | Policy |
+| T15 | Free-tier LLM behind OpenClaw retains captions | Confidential content shared with provider | Test data only, move to a data-protected tier before real use | Policy |
+| T19 | OpenClaw host compromised, or a malicious community skill installed | Attacker uses the Clawed token, or reads plaintext credentials on the host | Dedicated host, scoped revocable token, no PostPilot secrets on it, review skills, disable unneeded tools, allowlist WhatsApp senders | Designed |
+| T20 | Stranger messages the WhatsApp number and instructs the agent | Unauthorized drafts or posts | WhatsApp allowlist, two-step confirmation, token scoping, rate limits | Designed |
 | T16 | Mock mistaken for real publishing | Wrong expectations | "Simulated" labels, README status table | Done in UI plan |
 | T17 | Time zone mistakes schedule a post at the wrong hour | Posted at the wrong time | Store UTC, show local and UTC, confirm summary before scheduling | Designed |
 | T18 | Failed story part breaks the order | Confusing story | Later parts wait if an earlier part fails | Designed |
 
 ## 5. Highest priority for the demo
-T1, T2, T3, T5 and T7. These are the ones that cause real damage or are easy to get wrong early.
+T1, T2, T3, T5, T7 and T19. These are the ones that cause real damage or are easy to get wrong early.
 
 ## 6. Not covered yet
 Penetration testing, formal compliance review, disaster recovery drills, and a full review of platform-specific terms. Revisit this document when real accounts are connected.

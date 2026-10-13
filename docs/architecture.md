@@ -12,7 +12,7 @@ PostPilot takes a **finished image or video plus a caption**, lets the user sche
 | Celery + Redis | Scheduling, publishing jobs, retries, render jobs, metric collection. Redis is not durable truth. |
 | ffmpeg (in workers) | Per-platform crops, trims and story part cuts. |
 | Platform adapters | LinkedIn (real, when approved), Instagram, Facebook, TikTok (simulated). |
-| Clawed | Natural-language assistant calling allowlisted FastAPI tools. |
+| Clawed (OpenClaw) | External open-source agent reachable on WhatsApp. Calls PostPilot only through the scoped Clawed API using a custom skill. Brings its own LLM key. |
 
 Principle: Drive stores files, Postgres stores facts, Celery does work, FastAPI enforces rules, adapters talk to platforms, Clawed is the chat interface.
 
@@ -42,7 +42,7 @@ FOREIGN KEY (social_account_id, profile_id) REFERENCES social_accounts(id, profi
 3. Row level security on every exposed table. The service role key stays on the server.
 
 ## 4. Data model
-`profiles` (name, slug, type, description, image_url), `profile_members`, `social_accounts` (encrypted tokens, status, `tracked_since`, `is_mock`), `media_assets` (kind image|video, drive_file_id, width, height, duration_ms, size_bytes, mime, checksum, profile_id), `media_variants` (asset_id, platform, aspect, fit crop|blur_fill|letterbox, crop_cx, crop_cy, zoom, trim_start_ms, trim_end_ms, rendered_file_id), `posts` (profile_id, type post|story, title, caption, status, planned_date, scheduled_at, cta_type), `post_targets` (post_id, profile_id, account_id, platform, variant_id, caption override, status, external id/url, error fields), `story_parts` (target_id, index, start_ms, end_ms, status), `publishing_jobs` (idempotency_key UNIQUE, attempt_count, max_attempts, available_at, next_retry_at, lease_expires_at, last_heartbeat_at, worker_id, error fields), `publishing_execution_logs`, `metric_snapshots` (target_id, captured_at, raw jsonb, normalized columns), `recommendations`, `audit_log`, `clawed_conversations`.
+SQL: `supabase/migrations/0001_core.sql` (core), `0003_jobs_variants_metrics.sql` (later). Tables: `profiles` (name, slug, type, description, image_url), `profile_members`, `social_accounts` (encrypted tokens, status, `tracked_since`, `is_mock`), `media_assets` (kind image|video, drive_file_id, width, height, duration_ms, size_bytes, mime, checksum, profile_id), `media_variants` (asset_id, platform, aspect, fit crop|blur_fill|letterbox, crop_cx, crop_cy, zoom, trim_start_ms, trim_end_ms, rendered_file_id), `posts` (profile_id, type post|story, title, caption, status, planned_date, scheduled_at, cta_type), `post_targets` (post_id, profile_id, account_id, platform, variant_id, caption override, status, external id/url, error fields), `story_parts` (target_id, index, start_ms, end_ms, status), `publishing_jobs` (idempotency_key UNIQUE, attempt_count, max_attempts, available_at, next_retry_at, lease_expires_at, last_heartbeat_at, worker_id, error fields), `publishing_execution_logs`, `metric_snapshots` (target_id, captured_at, raw jsonb, normalized columns), `recommendations`, `audit_log`, `clawed_conversations`.
 
 Media may be archived or deleted by policy. Post, target, job, log, metric and audit rows stay.
 
@@ -88,12 +88,25 @@ The calendar fetches ranges (`getRange(from, to, profileId)`) and supports month
 - Each platform shows its own metric names. "All" shows only shared metrics.
 - Recommendations are objects: `{kind, platform, evidence, action}`. A suggestion appears only with at least 5 posts per compared group and at least a 15% difference. `action` carries the exact values (platform, post type, weekday, local time, timezone) that "Try this" prefills in Create. Time is stored in UTC and shown in the profile's timezone (default Asia/Kuala_Lumpur).
 
-## 11. Clawed
-One shared chat and history, not re-themed by profile. It calls allowlisted tools (`get_posts`, `get_scheduled_posts`, `create_post`, `update_post`, `schedule_post`, `cancel_post`, `get_post_metrics`, `get_content_performance`, `generate_recommendations`, and similar) through FastAPI. Each action names its profile: the one in the request, else the selected profile, always shown in the confirmation card. Mock mode works with no LLM key. It never sees credentials, and content it reads is treated as data.
+## 11. Clawed (OpenClaw)
+Clawed is the OpenClaw agent: an open-source, self-hosted assistant with its own gateway that talks to WhatsApp, Telegram and similar apps, and is extended with skills (a folder with a `SKILL.md`). PostPilot does not build a chatbot or call an LLM for it. Two pieces connect them:
+
+1. **Clawed API** in FastAPI: a small set of endpoints that act as tools (`get_posts`, `get_scheduled_posts`, `create_draft`, `schedule_post`, `cancel_post`, `get_post_metrics`, `get_content_performance`, `get_recommendations`, and similar). Authenticated with a dedicated, revocable API token that is scoped to specific profiles and operations. It is not the Supabase service key and not a user password.
+2. **A PostPilot skill** for OpenClaw: a `SKILL.md` that tells the agent which endpoints exist and how to call them.
+
+Rules:
+- Every call is authorized by the backend like any other request: token, then profile, then action.
+- Each action names its profile (the one in the message, otherwise a configured default), and the confirmation says which.
+- High-impact actions are two-step. The API returns a proposal (profile, platform, time, caption summary) and a confirmation id. Nothing runs until the user confirms, in WhatsApp or in the app.
+- Audit log records `source = clawed` and the channel.
+- Rate limits apply. WhatsApp senders are allowlisted in OpenClaw so strangers can't instruct it.
+- OpenClaw never receives OAuth tokens, Google credentials or the service role key. It stays a client of the API.
+- OpenClaw runs on its own machine or container, with shell and file tools it doesn't need turned off, and only reviewed skills installed.
+- The in-app Clawed page stays a simple chat UI over the same Clawed API, one shared history, until the OpenClaw gateway is connected. Mock mode works without any LLM key.
 
 ## 12. Environment variables (names only)
 Frontend: `VITE_API_MODE`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
-Server: `SUPABASE_SERVICE_ROLE_KEY`, `TOKEN_ENCRYPTION_SECRET`, `REDIS_URL`, `CELERY_BROKER_URL`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `DRIVE_ROOT_FOLDER_ID`, `GEMINI_API_KEY`, `USE_MOCK_LINKEDIN`, `USE_MOCK_INSTAGRAM`, `USE_MOCK_FACEBOOK`, `USE_MOCK_TIKTOK`, `USE_MOCK_CLAWED`, `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_API_VERSION`.
+Server: `SUPABASE_SERVICE_ROLE_KEY`, `TOKEN_ENCRYPTION_SECRET`, `REDIS_URL`, `CELERY_BROKER_URL`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `DRIVE_ROOT_FOLDER_ID`, `CLAWED_API_TOKEN` (stored hashed, one per integration), `USE_MOCK_LINKEDIN`, `USE_MOCK_INSTAGRAM`, `USE_MOCK_FACEBOOK`, `USE_MOCK_TIKTOK`, `USE_MOCK_CLAWED`, `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI`, `LINKEDIN_API_VERSION`.
 Only `VITE_` values may reach the browser. Commit `.env.example` only.
 
 ## 13. Hosting
